@@ -43,9 +43,6 @@
     "url": "https://gitlab.com/deepcodestudio/react-native-image-gallery.git/issues"
   },
   "homepage": "https://gitlab.com/deepcodestudio/react-native-image-gallery.git#readme",
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
-  },
   "devDependencies": {
     "@commitlint/config-conventional": "^11.0.0",
     "@react-native-community/eslint-config": "^2.0.0",
@@ -77,12 +74,6 @@
       "<rootDir>/example/node_modules",
       "<rootDir>/lib/"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "yarn lint && yarn typescript"
-    }
   },
   "commitlint": {
     "extends": [
@@ -149,5 +140,8 @@
         }
       ]
     ]
+  },
+  "dependencies": {
+    "react-native-image-pan-zoom": "^2.1.12"
   }
 }
