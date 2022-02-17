@@ -75,6 +75,42 @@ export default class ImageViewer extends React.Component<Props, State> {
     }
   }
 
+  public reloadAllLoadedImage() {
+    for (let index of Array.from(this.loadedIndex.keys())) {
+      const image = this.props.imageUrls[index];
+      const imageStatus = { ...this!.state!.imageSizes![index] };
+
+      // 保存 imageSize 不管当前是否已经加载成功
+      const saveImageSizeRegardlessImageState = () => {
+        const imageSizes = this!.state!.imageSizes!.slice();
+        imageSizes[index] = imageStatus;
+        this.setState({ imageSizes });
+      };
+      Image.getSize(
+        image.url,
+        (width: number, height: number) => {
+          imageStatus.width = width;
+          imageStatus.height = height;
+          imageStatus.status = 'success';
+          saveImageSizeRegardlessImageState();
+        },
+        () => {
+          try {
+            const data = (Image as any).resolveAssetSource(image.props.source);
+            imageStatus.width = data.width;
+            imageStatus.height = data.height;
+            imageStatus.status = 'success';
+            saveImageSizeRegardlessImageState();
+          } catch (newError) {
+            // Give up..
+            imageStatus.status = 'fail';
+            saveImageSizeRegardlessImageState();
+          }
+        },
+      );
+    }
+  }
+
   /**
    * props 有变化时执行
    */
@@ -113,15 +149,17 @@ export default class ImageViewer extends React.Component<Props, State> {
           duration: 200,
           useNativeDriver: !!nextProps.useNativeDriver,
         }).start();
-      }
+      },
     );
   }
+
   /**
    * reset Image scale and position
    */
   public resetImageByIndex = (index: number) => {
     this.imageRefs[index] && this.imageRefs[index].reset();
   };
+
   /**
    * 调到当前看图位置
    */
@@ -223,7 +261,7 @@ export default class ImageViewer extends React.Component<Props, State> {
           imageStatus.status = 'fail';
           saveImageSize();
         }
-      }
+      },
     );
   }
 
@@ -265,14 +303,14 @@ export default class ImageViewer extends React.Component<Props, State> {
     const vxRTL = I18nManager.isRTL ? -vx : vx;
     const isLeftMove = I18nManager.isRTL
       ? this.positionXNumber - this.standardPositionX <
-        -(this.props.flipThreshold || 0)
+      -(this.props.flipThreshold || 0)
       : this.positionXNumber - this.standardPositionX >
-        (this.props.flipThreshold || 0);
+      (this.props.flipThreshold || 0);
     const isRightMove = I18nManager.isRTL
       ? this.positionXNumber - this.standardPositionX >
-        (this.props.flipThreshold || 0)
+      (this.props.flipThreshold || 0)
       : this.positionXNumber - this.standardPositionX <
-        -(this.props.flipThreshold || 0);
+      -(this.props.flipThreshold || 0);
 
     if (vxRTL > 0.7) {
       // 上一张
@@ -336,7 +374,7 @@ export default class ImageViewer extends React.Component<Props, State> {
         if (this.props.onChange) {
           this.props.onChange(this.state.currentShowIndex);
         }
-      }
+      },
     );
   };
 
@@ -370,7 +408,7 @@ export default class ImageViewer extends React.Component<Props, State> {
         if (this.props.onChange) {
           this.props.onChange(this.state.currentShowIndex);
         }
-      }
+      },
     );
   };
 
@@ -441,7 +479,7 @@ export default class ImageViewer extends React.Component<Props, State> {
       this.styles = styles(
         this.width,
         this.height,
-        this.props.backgroundColor || 'transparent'
+        this.props.backgroundColor || 'transparent',
       );
 
       // 强制刷新
@@ -474,7 +512,7 @@ export default class ImageViewer extends React.Component<Props, State> {
       if (!this.handleLongPressWithIndex.has(index)) {
         this.handleLongPressWithIndex.set(
           index,
-          this.handleLongPress.bind(this, image)
+          this.handleLongPress.bind(this, image),
         );
       }
 
@@ -624,15 +662,15 @@ export default class ImageViewer extends React.Component<Props, State> {
               }
             >
               {this.props.failImageSource &&
-                this!.props!.renderImage!({
-                  source: {
-                    uri: this.props.failImageSource.url,
-                  },
-                  style: {
-                    width: this.props.failImageSource.width,
-                    height: this.props.failImageSource.height,
-                  },
-                })}
+              this!.props!.renderImage!({
+                source: {
+                  uri: this.props.failImageSource.url,
+                },
+                style: {
+                  width: this.props.failImageSource.width,
+                  height: this.props.failImageSource.height,
+                },
+              })}
             </Wrapper>
           );
       }
@@ -669,20 +707,20 @@ export default class ImageViewer extends React.Component<Props, State> {
           </Animated.View>
           {this!.props!.renderIndicator!(
             (this.state.currentShowIndex || 0) + 1,
-            this.props.imageUrls.length
+            this.props.imageUrls.length,
           )}
 
           {this.props.imageUrls[this.state.currentShowIndex || 0] &&
-            this.props.imageUrls[this.state.currentShowIndex || 0]
-              .originSizeKb &&
-            this.props.imageUrls[this.state.currentShowIndex || 0]
-              .originUrl && (
-              <View style={this.styles.watchOrigin}>
-                <TouchableOpacity style={this.styles.watchOriginTouchable}>
-                  <Text style={this.styles.watchOriginText}>查看原图(2M)</Text>
-                </TouchableOpacity>
-              </View>
-            )}
+          this.props.imageUrls[this.state.currentShowIndex || 0]
+            .originSizeKb &&
+          this.props.imageUrls[this.state.currentShowIndex || 0]
+            .originUrl && (
+            <View style={this.styles.watchOrigin}>
+              <TouchableOpacity style={this.styles.watchOriginTouchable}>
+                <Text style={this.styles.watchOriginText}>查看原图(2M)</Text>
+              </TouchableOpacity>
+            </View>
+          )}
           <View
             style={[
               { bottom: 0, position: 'absolute', zIndex: 9 },
@@ -702,12 +740,12 @@ export default class ImageViewer extends React.Component<Props, State> {
   public saveToLocal = () => {
     if (!this.props.onSave) {
       CameraRoll.saveToCameraRoll(
-        this.props.imageUrls[this.state.currentShowIndex || 0].url
+        this.props.imageUrls[this.state.currentShowIndex || 0].url,
       );
       this!.props!.onSaveToCamera!(this.state.currentShowIndex);
     } else {
       this.props.onSave(
-        this.props.imageUrls[this.state.currentShowIndex || 0].url
+        this.props.imageUrls[this.state.currentShowIndex || 0].url,
       );
     }
 
@@ -735,7 +773,7 @@ export default class ImageViewer extends React.Component<Props, State> {
         <View style={this.styles.menuShadow} />
         <View style={this.styles.menuContent}>
           <TouchableHighlight
-            underlayColor="#F2F2F2"
+            underlayColor='#F2F2F2'
             onPress={this.saveToLocal}
             style={this.styles.operateContainer}
           >
@@ -744,7 +782,7 @@ export default class ImageViewer extends React.Component<Props, State> {
             </Text>
           </TouchableHighlight>
           <TouchableHighlight
-            underlayColor="#F2F2F2"
+            underlayColor='#F2F2F2'
             onPress={this.handleLeaveMenu}
             style={this.styles.operateContainer}
           >
