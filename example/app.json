@@ -1,0 +1,22 @@
+{
+  "name": "react-native-image-gallery-example",
+  "displayName": "ImageGallery Example",
+  "expo": {
+    "name": "react-native-image-gallery-example",
+    "slug": "react-native-image-gallery-example",
+    "description": "Example app for react-native-image-gallery",
+    "privacy": "public",
+    "version": "1.0.0",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}

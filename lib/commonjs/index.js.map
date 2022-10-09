@@ -1,0 +1,1 @@
+{"version":3,"sources":["index.ts"],"names":["ImageViewer"],"mappings":";;;;;;;;;;;;;;;;;;;AAAA;;AACA;;;;eAGeA,oB","sourcesContent":["import ImageViewer from './image-viewer.component';\nimport { Props as ImageViewerPropsDefine } from './image-viewer.type';\n\nexport { ImageViewer, ImageViewerPropsDefine };\nexport default ImageViewer;\n"]}
